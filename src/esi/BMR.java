@@ -54,7 +54,7 @@ public class BMR extends Application{
         stage.setTitle("My first JavaFX App");
         // remplacer par HBOX BorderPane root =new BorderPane();
         stage.setTitle("My First JavaFX Appli");
-        stage.getIcons().add(new Image(("file:sante.jpg"))); //pour mettre changer l'icon de la fenêtre 
+        stage.getIcons().add(new Image("file:sante.jpg")); //pour mettre changer l'icon de la fenêtre 
         stage.setResizable(false);
         stage.setMinHeight(200);
         stage.setMinWidth(300);
