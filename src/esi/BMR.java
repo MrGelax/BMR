@@ -35,6 +35,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
@@ -183,6 +184,20 @@ public class BMR extends Application{
         tfImc.setPromptText("IMC :25");
         gp2.add(tfImc, 1,1);
         
+        //Rectyangle couleur
+        
+        Rectangle r=new Rectangle();
+        Label lb=new Label("");
+        
+        r.setWidth(100);
+        r.setHeight(25);
+        r.setArcHeight(5);
+        r.setArcWidth(5);
+        r.setFill(Color.TRANSPARENT);
+        r.setStroke(Color.GREY);
+        gp2.add(lb,0,3,2,1);
+        gp2.add(r,1,2);
+        
         
         //Bouton calcu
         Button btnCalc=new Button("Calculer BMR");
@@ -194,9 +209,37 @@ public class BMR extends Application{
                 alrt.setTitle("Erreur d'encodage");
                 alrt.setHeaderText("BlaBlaBla");
                 alrt.setGraphic(new ImageView("file:warning2.png"));
-                traitement("0",tfTaille,tfPoid,tfAge,cbVie,tfImc,alrt,tfBmr,group);
+                
+                //Traitement rectangle quand calc
+                double resImc=traitement("0",tfTaille,tfPoid,tfAge,cbVie,tfImc,alrt,tfBmr,group);
+                if (resImc==0)
+                    r.setFill(Color.WHITE);
+                else
+                    if(resImc<18.5)
+                        r.setFill(Color.BEIGE);
+                        lb.setText("Vous êtes dans la claisfication Maigreur");
+                    if(resImc>=18.5&&resImc<=24.9)
+                        r.setFill(Color.GREEN);
+                        lb.setText("Vous êtes dans la claisfication Normal");
+                    if(resImc>=25&&resImc<=29.9)
+                        r.setFill(Color.ORANGE);
+                        lb.setText("Vous êtes dans la claisfication Surpoids");
+                    if(resImc>=30)
+                        r.setFill(Color.RED);
+                        lb.setText("Vous êtes dans la claisfication Obésité");
+                    /*
+                    switch((int)resImc){
+                        case 18:case 19:case 20:case 21:case 22:case 23:case 24:case 25:r.setFill(Color.GREEN);
+                            lb.setText("Vous êtes dans la claisfication Normal");break;
+                        case 26:case 27:case 28:case 29:case 30: r.setFill(Color.ORANGE);
+                            lb.setText("Vous êtes dans la claisfication Surpoids");break;
+                        case 31:case 32:case 33:case 34:case 35: r.setFill(Color.RED);
+                            lb.setText("Vous êtes dans la claisfication Obésité");break;
+                    }*/
             }
         });
+        
+        
         //Boutton clear
         Button cl=new Button("Clear");
         cl.setOnAction(new EventHandler<ActionEvent>(){
@@ -211,6 +254,8 @@ public class BMR extends Application{
                 tfBmr.clear();
                 tfImc.clear();
                 cbVie.setValue(StyleVie.Actif);
+                r.setFill(Color.TRANSPARENT);
+                lb.setText(" ");
                 if (femme.isSelected())
                     femme.setSelected(false);
                 else
@@ -261,7 +306,6 @@ public class BMR extends Application{
         }
         return str;
     }
-    
     public String validParamImc(TextField tfTaille,TextField tfPoid,String str){  
         try{
             str=(""+Double.parseDouble(tfPoid.getText())
@@ -272,9 +316,19 @@ public class BMR extends Application{
         return str;
     }
     
-    public void traitement(String str,TextField tfTaille,TextField tfPoid,TextField tfAge,
+    public double validParamImcBis(TextField tfTaille,TextField tfPoid,Double res){  
+        try{
+            res=(Double.parseDouble(tfPoid.getText())
+                /Math.pow(Double.parseDouble(tfTaille.getText()),2));
+        }catch(NumberFormatException e){
+            res=0.0;
+        }
+        return res;
+    }
+    
+    public double traitement(String str,TextField tfTaille,TextField tfPoid,TextField tfAge,
             ChoiceBox cbVie,TextField tfImc,Alert alrt,TextField tfBmr,ToggleGroup group){
-        
+        double res=0;
         try{
             if((tfTaille.getText()==null||Double.parseDouble(tfTaille.getText())<1||tfTaille.getText().charAt(0)==' ')
                 ||(tfPoid.getText()==null||Double.parseDouble(tfPoid.getText())<1||tfPoid.getText().charAt(0)==' ')
@@ -284,6 +338,7 @@ public class BMR extends Application{
             else
                 tfBmr.setText(validParamBmr(tfTaille,tfPoid,tfAge,cbVie,tfImc,group));
                 tfImc.setText(validParamImc(tfTaille,tfPoid," "));
+                res=validParamImcBis(tfTaille,tfPoid,0.0);
                 if(tfBmr.getText().equals("Failled"))
                     tfBmr.setStyle("-fx-text-inner-color:red;"); //pour changer la couleur
                 else
@@ -295,5 +350,6 @@ public class BMR extends Application{
         }catch(NullPointerException e){
             alrt.showAndWait();
         }
+        return res;
     }
 }

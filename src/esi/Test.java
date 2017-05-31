@@ -26,18 +26,17 @@ import javafx.stage.Stage;
  *
  * @author Pedro
  */
-public abstract class Test extends Application{
+public class Test extends Application{
     public static void lancement(String []args){
         launch(args);
     }
     
     @Override
     public void start(Stage stage){
-
         stage.setTitle("My first JavaFX App");
         // remplacer par HBOX BorderPane root =new BorderPane();
         stage.setTitle("My First JavaFX Appli");
-        stage.getIcons().add(new Image(("file:sante.jpg"))); //pour mettre changer l'icon de la fenêtre 
+        stage.getIcons().add(new Image(("file:sante.jpg"))); //permet de changer l'icon de la fenêtre 
         stage.setResizable(false);
         stage.setMinHeight(200);
         stage.setMinWidth(300);
@@ -49,7 +48,9 @@ public abstract class Test extends Application{
         cb.getItems().addAll(Color.red,Color.BLUE,Color.GREEN,Color.BLACK);
         hb.getChildren().addAll(bt,cb);
         //Led ld=new Led();
+        //hb.getChildren().add(ld);
         root.getChildren().addAll(hb);
+        
         Scene sc=new Scene(root);
         root.setAlignment(Pos.CENTER);
         stage.setScene(sc);
@@ -57,8 +58,8 @@ public abstract class Test extends Application{
     }
     
     public static void main(String[] args) {
-        lancement(args);
-        //BMR.lancement(args);
+        //lancement(args);
+        BMR.lancement(args);
         //PrintTest.lancement(args);
     }
 }

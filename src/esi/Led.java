@@ -5,59 +5,32 @@
  */
 package esi;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ObjectPropertyBase;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 
 /**
  *
  * @author Pedro
  */
-public class Led extends Parent{
-    private final BooleanProperty on;
-    private final ObjectProperty<Color> color;
-    private final Circle cr;
+public class Led{
     
-    public Led(){
-        on=new SimpleBooleanProperty(true);
-        color=new ObjectPropertyBase<Color>(){
-            @Override
-            public Object getBean(){
-                return this;
-            }
-            @Override
-            public String getName(){
-                return "Color";
-            }
-        };
-        cr=new Circle(50);
-        cr.setStroke(Color.BLACK);
-        getChildren().add(cr);
-        setColor(Color.RED);
-    }
-    public final void setOn(Boolean on){
-        this.on.set(on);
-        cr.setFill(on?color.get():Color.TRANSPARENT);
-    }
-    public final boolean isOn(){
-        return on.get();
-    }
-    public BooleanProperty onProperty(){
-        return on;
-    }
-    public final Color getColor(){
-        return color.get();
-    }
-    public final void setColor(Color color){
-        this.color.set(color);
-        cr.setFill(isOn()?getColor():Color.TRANSPARENT);
-    }
-    public final ObjectProperty<Color> colorProperty(){
-        return color;
+    public Led(double resImc, Label lb){
+        Rectangle r=new Rectangle();
+        r.setWidth(10);
+        r.setHeight(30);
+        if (resImc==0)
+            r.setFill(Color.TRANSPARENT);
+        else
+            switch((int)resImc){
+            case 18:case 19:case 20:case 21:case 22:case 23:case 24:case 25:r.setFill(Color.GREEN);
+                lb.setText("Vous êtes dans la claisfication Normal (entre 18.5 et 24.9)");break;
+            case 26:case 27:case 28:case 29:case 30: r.setFill(Color.ORANGE);
+                lb.setText("Vous êtes dans la claisfication Surpoids (entre 25 et 29.9)");break;
+            case 31:case 32:case 33:case 34:case 35: r.setFill(Color.RED);
+                lb.setText("Vous êtes dans la claisfication Obésité (plus de 30)");break;
+        }
     }
     
     
