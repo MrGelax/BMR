@@ -84,16 +84,11 @@ public class BMR extends Application{
         Menu menFile=new Menu("File");
         //Item Exit
         MenuItem exit=new MenuItem("Exit");
-        exit.setOnAction(new EventHandler <ActionEvent>(){
-            public void handle(ActionEvent ev){
-                stage.close();
-            }
-        });
+        
+        exit.setOnAction (ev->stage.close());
         menFile.getItems().add(exit);       
         menu.getMenus().add(menFile);
-        root.getChildren().add(menu);
-        
-        
+        root.getChildren().add(menu);    
     // different elements gp
 
         //Taille
@@ -147,27 +142,16 @@ public class BMR extends Application{
         
         //Tratement tfList
         for(TextField ft:tfList)
-            ft.addEventFilter(KeyEvent.KEY_TYPED,new EventHandler<KeyEvent>(){
-                @Override
-                public void handle(KeyEvent ke){
+            ft.addEventFilter(KeyEvent.KEY_TYPED,(KeyEvent ke)->{
                     if(Character.isLetter(ke.getCharacter().charAt(0)))
-                    ke.consume();
-                }
+                        ke.consume();
             });
-        
 //différent elements gp2 
-
-        
         //BMR
         Label bmr=new Label("Calories");
         gp2.add(bmr,0,0);
         TextField tfBmr=new TextField();
-        tfBmr.addEventFilter(KeyEvent.KEY_TYPED,new EventHandler<KeyEvent>(){
-            @Override
-            public void handle(KeyEvent ke){
-                ke.consume();
-            }
-        });
+        tfBmr.addEventFilter(KeyEvent.KEY_TYPED,(KeyEvent ke)->{ke.consume();});
         tfBmr.setPromptText("Calories : 2100");
         gp2.add(tfBmr,1,0);
         
@@ -175,12 +159,7 @@ public class BMR extends Application{
         Label imc=new Label("IMC");
         gp2.add(imc,0,1);
         TextField tfImc=new TextField();
-        tfImc.addEventFilter(KeyEvent.KEY_TYPED,new EventHandler<KeyEvent>(){
-            @Override
-            public void handle(KeyEvent ke){
-                ke.consume();
-            }
-        });
+        tfImc.addEventFilter(KeyEvent.KEY_TYPED,(KeyEvent ke)->{ke.consume();});
         tfImc.setPromptText("IMC :25");
         gp2.add(tfImc, 1,1);
         
@@ -198,70 +177,13 @@ public class BMR extends Application{
         gp2.add(lb,0,3,2,1);
         gp2.add(r,1,2);
         
-        
         //Bouton calcu
         Button btnCalc=new Button("Calculer BMR");
-        btnCalc.setOnAction(new EventHandler<ActionEvent>(){
-            @Override
-            public void handle(ActionEvent ev){
-                //Boite de dialogue
-                Alert alrt=new Alert(AlertType.ERROR,"Erreur");
-                alrt.setTitle("Erreur d'encodage");
-                alrt.setHeaderText("BlaBlaBla");
-                alrt.setGraphic(new ImageView("file:warning2.png"));
-                
-                //Traitement rectangle quand calc
-                double resImc=traitement("0",tfTaille,tfPoid,tfAge,cbVie,tfImc,alrt,tfBmr,group);
-                if (resImc==0)
-                    r.setFill(Color.WHITE);
-                else
-                    if(resImc<18.5)
-                        r.setFill(Color.BEIGE);
-                        lb.setText("Vous êtes dans la claisfication Maigreur");
-                    if(resImc>=18.5&&resImc<=24.9)
-                        r.setFill(Color.GREEN);
-                        lb.setText("Vous êtes dans la claisfication Normal");
-                    if(resImc>=25&&resImc<=29.9)
-                        r.setFill(Color.ORANGE);
-                        lb.setText("Vous êtes dans la claisfication Surpoids");
-                    if(resImc>=30)
-                        r.setFill(Color.RED);
-                        lb.setText("Vous êtes dans la claisfication Obésité");
-                    /*
-                    switch((int)resImc){
-                        case 18:case 19:case 20:case 21:case 22:case 23:case 24:case 25:r.setFill(Color.GREEN);
-                            lb.setText("Vous êtes dans la claisfication Normal");break;
-                        case 26:case 27:case 28:case 29:case 30: r.setFill(Color.ORANGE);
-                            lb.setText("Vous êtes dans la claisfication Surpoids");break;
-                        case 31:case 32:case 33:case 34:case 35: r.setFill(Color.RED);
-                            lb.setText("Vous êtes dans la claisfication Obésité");break;
-                    }*/
-            }
-        });
-        
+        btnCalc.setOnAction(e->actionBmr(tfTaille,tfPoid,tfAge,cbVie,tfImc,tfBmr,group,r,lb));  
         
         //Boutton clear
         Button cl=new Button("Clear");
-        cl.setOnAction(new EventHandler<ActionEvent>(){
-            @Override
-            public void handle(ActionEvent ev){
-                tfTaille.clear();
-                tfTaille.setText(null);
-                tfPoid.clear();
-                tfPoid.setText(null);
-                tfAge.clear();
-                tfAge.setText(null);
-                tfBmr.clear();
-                tfImc.clear();
-                cbVie.setValue(StyleVie.Actif);
-                r.setFill(Color.TRANSPARENT);
-                lb.setText(" ");
-                if (femme.isSelected())
-                    femme.setSelected(false);
-                else
-                    homme.setSelected(false);
-            }
-        });
+        cl.setOnAction(e->actionClear(tfTaille,tfPoid,tfAge,cbVie,tfImc,tfBmr,r,lb,homme,femme));
         // Ajout compo
         hb.getChildren().addAll(gp,gp2);
         hbBis.getChildren().addAll(btnCalc,cl);
@@ -283,6 +205,51 @@ public class BMR extends Application{
             
         }
         return ind;
+    }
+    
+    public void actionClear(TextField tfTaille,TextField tfPoid,TextField tfAge,
+            ChoiceBox cbVie,TextField tfImc,TextField tfBmr,Rectangle r,
+            Label lb,RadioButton homme,RadioButton femme){
+                tfTaille.clear();
+                tfTaille.setText(null);
+                tfPoid.clear();
+                tfPoid.setText(null);
+                tfAge.clear();
+                tfAge.setText(null);
+                tfBmr.clear();
+                tfImc.clear();
+                cbVie.setValue(StyleVie.Actif);
+                r.setFill(Color.TRANSPARENT);
+                lb.setText(" ");
+                if (femme.isSelected())
+                    femme.setSelected(false);
+                else
+                    homme.setSelected(false);
+    }
+    
+    public void actionBmr(TextField tfTaille,TextField tfPoid,TextField tfAge,
+            ChoiceBox cbVie,TextField tfImc,TextField tfBmr,ToggleGroup group,
+            Rectangle r, Label lb){
+                Alert alrt=new Alert(AlertType.ERROR,"Erreur");
+                alrt.setTitle("Erreur d'encodage");
+                alrt.setHeaderText("BlaBlaBla");
+                alrt.setGraphic(new ImageView("file:warning2.png"));
+                double resImc=traitement("0",tfTaille,tfPoid,tfAge,cbVie,tfImc,alrt,tfBmr,group);
+                if (resImc==0)
+                    r.setFill(Color.WHITE);
+                else
+                    if(resImc<18.5)
+                        r.setFill(Color.BEIGE);
+                        lb.setText("Vous êtes dans la claisfication Maigreur");
+                    if(resImc>=18.5&&resImc<=24.9)
+                        r.setFill(Color.GREEN);
+                        lb.setText("Vous êtes dans la claisfication Normal");
+                    if(resImc>=25&&resImc<=29.9)
+                        r.setFill(Color.ORANGE);
+                        lb.setText("Vous êtes dans la claisfication Surpoids");
+                    if(resImc>=30)
+                        r.setFill(Color.RED);
+                        lb.setText("Vous êtes dans la claisfication Obésité");
     }
     
     public String validParamBmr(TextField tfTaille,TextField tfPoid,TextField tfAge,
